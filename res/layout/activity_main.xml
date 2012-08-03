@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    <LinearLayout
+      android:orientation="vertical"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent">
+<RelativeLayout
+    android:id="@+id/textphoto"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#FFFFFF">
+   <LinearLayout
+      android:orientation="vertical"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent">
+        <ImageView
+          android:id="@+id/ivTest"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          />
+       </LinearLayout>
+</RelativeLayout>
+
+<RelativeLayout
+    android:id="@+id/text"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#FFFFFF">
+<LinearLayout
+      android:orientation="vertical"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent">
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:enabled="false"
+        android:text="姓名："
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <AutoCompleteTextView
+        android:id="@+id/autoCompleteTextView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:textColor="#FF0000"
+        android:text="" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:enabled="false"
+        android:text="電話："
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <AutoCompleteTextView
+        android:id="@+id/autoCompleteTextView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:textColor="#FF0000"
+        android:text="" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:enabled="false"
+        android:text="地址："
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <AutoCompleteTextView
+        android:id="@+id/autoCompleteTextView3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:textColor="#FF0000"
+        android:text="" >
+
+        <requestFocus />
+    </AutoCompleteTextView>
+
+</LinearLayout>
+</RelativeLayout>
+<RelativeLayout
+    android:id="@+id/photo"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+      android:background="#FFFFFF">
+      <Button
+          android:id="@+id/ButtonShot"
+          android:layout_width="fill_parent"
+          android:layout_height="wrap_content"
+          android:text="拍照"/>
+</RelativeLayout>
+
+<RelativeLayout
+    android:id="@+id/introLayout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+      android:background="#FFFFFF">
+      <LinearLayout
+      android:orientation="vertical"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent">
+      <Button
+          android:id="@+id/Buttonsend"
+          android:layout_width="fill_parent"
+          android:layout_height="wrap_content"
+          android:text="送出"/>
+       </LinearLayout>
+</RelativeLayout>
+    </LinearLayout>
+</ScrollView>
