@@ -14,6 +14,8 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;  
 import java.util.Date;  
 import android.app.Activity;  
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;  
 import android.database.Cursor;  
@@ -24,6 +26,8 @@ import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;  
 import android.os.Bundle;  
 import android.os.Environment;  
@@ -51,6 +55,7 @@ public class MainActivity extends Activity  implements OnClickListener {
       private boolean getService = false;
       public String latitude;//緯度
       public String longitude;//經度
+      private ProgressDialog dialog;
 	         private String strImgPath = "";// 照片文件绝对路径    
 	         private String strVideoPath = "";// 视频文件的绝对路径    
 	         Canvas canvas;
@@ -79,8 +84,17 @@ public class MainActivity extends Activity  implements OnClickListener {
 	                 introLayout.setVisibility(View.GONE);
 	                 textphoto.setVisibility(View.GONE);
 	                 text.setVisibility(View.GONE);
-	                
+	                 
 	         }    
+	         public boolean isOnline() {
+	        	  ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+	        	  NetworkInfo netInfo = cm.getActiveNetworkInfo();
+	        	  if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+	        	    return true;
+	        	  }else{
+		        	  return false;
+	        	  }
+	        	}
 	         
 	        private void locationServiceInitial() {
 				
@@ -141,19 +155,21 @@ public class MainActivity extends Activity  implements OnClickListener {
 	             	 		  		}
 	                                 
 	                                 httppost(bJPGcompress);///////////傳取得的照片出去
-	                         }    
-	                         break;    
-	                 case REQUEST_CODE_TAKE_VIDEO://拍摄视频    
-	                         if (resultCode == RESULT_OK) {    
-	                                 Uri uriVideo = data.getData();    
-	                                 Cursor cursor=this.getContentResolver().query(uriVideo, null, null, null, null);    
-	                                 if (cursor.moveToNext()) {    
-	                                         /* _data：文件的绝对路径 ，_display_name：文件名 */    
-	                                         strVideoPath = cursor.getString(cursor.getColumnIndex("_data"));    
-	                                        Toast.makeText(this, strVideoPath, Toast.LENGTH_SHORT).show();    
-	                                 }    
-	                         }    
-	                         break;     
+	                         }
+	                        
+	                 //        break;    
+	                // case REQUEST_CODE_TAKE_VIDEO://拍摄视频    
+	                //         if (resultCode == RESULT_OK) {    
+	                //                Uri uriVideo = data.getData();    
+	                //                 Cursor cursor=this.getContentResolver().query(uriVideo, null, null, null, null);    
+	                //                 if (cursor.moveToNext()) {    
+	                //                         /* _data：文件的绝对路径 ，_display_name：文件名 */    
+	                //                         strVideoPath = cursor.getString(cursor.getColumnIndex("_data"));    
+	                //                        Toast.makeText(this, strVideoPath, Toast.LENGTH_SHORT).show();    
+	                //                 }    
+	                //         }    
+	                //         break;  
+	                         
 	                 }    
 	         }    
 
@@ -179,110 +195,129 @@ public class MainActivity extends Activity  implements OnClickListener {
 					@Override
 					public void onClick(View arg0) {
 						if ((textview1.getText().length()!=0) && (textview2.getText().length()!=0) && (textview3.getText().length()!=0)){
-	                		String lalo=latitude+","+longitude;
-	                		URL url;
-	        	        	FileInputStream fileInputStream;
-	        				try {
-	        					fileInputStream = new FileInputStream(new File(path));//path是新照照片的檔案路徑
-	        				
-	        	        	final String BOUNDARY 	= "==================================";//
-	        	        	final String HYPHENS 	= "--";								   //android 傳FILE固定格式需要用到的字串
-	        	        	final String CRLF 		= "\r\n";							   //
-	        	        	
-	        				try {
-	        					url = new URL("http://cyc.mrshih.com/dog/upload.php");
-	        				
-	        	            HttpURLConnection URLConn = (HttpURLConnection) url.openConnection(); 
-	        	       
-	        	            URLConn.setDoOutput(true); 
-	        	            URLConn.setDoInput(true); 
-	        	            ((HttpURLConnection) URLConn).setRequestMethod("POST"); 
-	        	            URLConn.setUseCaches(false); 	          
-	        	            URLConn.setInstanceFollowRedirects(false);
-	        	            
-	                        URLConn.setRequestProperty("Connection", "Keep-Alive");///////////////////////**********
-	        	            
-	        	            URLConn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + BOUNDARY);
-	        	        	DataOutputStream dataOS = new DataOutputStream(URLConn.getOutputStream());//開OUTPUT串流	 
-	        	        	////////////////////寫FILE////////////////DOWN
-	        	        	dataOS.writeBytes(HYPHENS+BOUNDARY+CRLF);		// 寫--==================================
-	        	        	dataOS.writeBytes("Content-Disposition:from-data; name=\"name\""+CRLF);
-	        	        	dataOS.writeBytes(CRLF);
-	        	        	//String t =URLEncoder.encode("王", "utf-8");
-	        	        	
-	        	        	dataOS.writeBytes(URLEncoder.encode(textview1.getText().toString(), "utf-8")+CRLF);
-	        	        	
-	        	        	
-	        	        	dataOS.writeBytes(HYPHENS+BOUNDARY+CRLF);		// 寫--==================================
-	        	        	dataOS.writeBytes("Content-Disposition:from-data; name=\"phone\""+CRLF);
-	        	        	dataOS.writeBytes(CRLF);
-	        	        	dataOS.writeBytes(URLEncoder.encode(textview2.getText().toString(), "utf-8")+CRLF);
-	        	        	
-	        	        	dataOS.writeBytes(HYPHENS+BOUNDARY+CRLF);		// 寫--==================================
-	        	        	dataOS.writeBytes("Content-Disposition:from-data; name=\"address\""+CRLF);
-	        	        	dataOS.writeBytes(CRLF);
-	        	        	dataOS.writeBytes(URLEncoder.encode(textview3.getText().toString(), "utf-8")+CRLF);
-	        	        	
-	        	        	dataOS.writeBytes(HYPHENS+BOUNDARY+CRLF);		// 寫--==================================
-	        	        	dataOS.writeBytes("Content-Disposition:from-data; name=\"gps\""+CRLF);
-	        	        	dataOS.writeBytes(CRLF);
-	        	        	dataOS.writeBytes(URLEncoder.encode(lalo, "utf-8")+CRLF);
-	        	        	Log.e("GPSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS", lalo);
-	        	        	dataOS.writeBytes(CRLF);
-	        	        	
-	        	        	dataOS.writeBytes(HYPHENS+BOUNDARY+CRLF);		// 寫--==================================
-	        	            String strContentDisposition = "Content-Disposition: form-data; name=\"file\"; filename=\"temp.jpeg\"";
-	        	            String strContentType = "Content-Type: image/jpeg";
-	        	            
-	        	        	dataOS.writeBytes(strContentDisposition+CRLF);	// 寫(Disposition)
-	        	        	dataOS.writeBytes(strContentType+CRLF);			// 寫(Content Type)
-	        	        	dataOS.writeBytes(CRLF);	
-	        	        	
-	        	        	int iBytesAvailable = fileInputStream.available();
-	        	        	byte[] byteData = new byte[iBytesAvailable];
-	        	            int iBytesRead = fileInputStream.read(byteData, 0, iBytesAvailable);
-	        	            
-	        	            /////寫照片//
-	        	        	while (iBytesRead > 0) {
-	        	        		dataOS.write(byteData, 0, iBytesAvailable);	// 開始寫內容
-	        	        		iBytesAvailable = fileInputStream.available();
-	        	        		iBytesRead = fileInputStream.read(byteData, 0, iBytesAvailable);
-	        	        	}
-	        	        	//////寫照片//
-	        	        	
-	        	        	dataOS.writeBytes(CRLF+HYPHENS+BOUNDARY+HYPHENS+CRLF);	// (結束)寫--==================================--		
-	        	        	fileInputStream.close();
-	        	            URLConn.connect();  
-	        	          
-	        	       
-	        	            dataOS.flush();
-	        	            dataOS.close(); // flush and close
-	        	            
-	        	            java.io.BufferedReader rd = new java.io.BufferedReader( new java.io.InputStreamReader(URLConn.getInputStream())); //開INPUT串流
-	        	            
-	        	            /*收PHP ECHO的字串*/
-	        	            String line; 
-	        	            Log.e("%%%%%%%%%%%%%%%%%", path);
-	        	            while ((line = rd.readLine()) != null) { 
-	        	             Log.e("##################",line); 
-	        	            } 	            
-	        	            /**********************/
-	        	            rd.close(); 
+						 final ProgressDialog dialog = ProgressDialog.show(MainActivity.this, "", 
+			                        "Uploading. Please wait...", true);
+						 new Thread(new Runnable(){
+				                @Override
+				                public void run() {
+				                    try{
+				                    	String lalo=latitude+","+longitude;
+				                		URL url;
+				        	        	FileInputStream fileInputStream;
+				        				try {
+				        					fileInputStream = new FileInputStream(new File(path));//path是新照照片的檔案路徑
+				        				
+				        	        	final String BOUNDARY 	= "==================================";//
+				        	        	final String HYPHENS 	= "--";								   //android 傳FILE固定格式需要用到的字串
+				        	        	final String CRLF 		= "\r\n";							   //
+				        	        	
+				        				try {
+				        					url = new URL("http://cyc.mrshih.com/dog/upload.php");
+				        				
+				        	            HttpURLConnection URLConn = (HttpURLConnection) url.openConnection(); 
+				        	       
+				        	            URLConn.setDoOutput(true); 
+				        	            URLConn.setDoInput(true); 
+				        	            ((HttpURLConnection) URLConn).setRequestMethod("POST"); 
+				        	            URLConn.setUseCaches(false); 	          
+				        	            URLConn.setInstanceFollowRedirects(false);
+				        	            
+				                        URLConn.setRequestProperty("Connection", "Keep-Alive");///////////////////////**********
+				        	            
+				        	            URLConn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + BOUNDARY);
+				        	        	DataOutputStream dataOS = new DataOutputStream(URLConn.getOutputStream());//開OUTPUT串流	 
+				        	        	////////////////////寫FILE////////////////DOWN
+				        	        	dataOS.writeBytes(HYPHENS+BOUNDARY+CRLF);		// 寫--==================================
+				        	        	dataOS.writeBytes("Content-Disposition:from-data; name=\"name\""+CRLF);
+				        	        	dataOS.writeBytes(CRLF);
+				        	        	//String t =URLEncoder.encode("王", "utf-8");
+				        	        	
+				        	        	dataOS.writeBytes(URLEncoder.encode(textview1.getText().toString(), "utf-8")+CRLF);
+				        	        	
+				        	        	
+				        	        	dataOS.writeBytes(HYPHENS+BOUNDARY+CRLF);		// 寫--==================================
+				        	        	dataOS.writeBytes("Content-Disposition:from-data; name=\"phone\""+CRLF);
+				        	        	dataOS.writeBytes(CRLF);
+				        	        	dataOS.writeBytes(URLEncoder.encode(textview2.getText().toString(), "utf-8")+CRLF);
+				        	        	
+				        	        	dataOS.writeBytes(HYPHENS+BOUNDARY+CRLF);		// 寫--==================================
+				        	        	dataOS.writeBytes("Content-Disposition:from-data; name=\"address\""+CRLF);
+				        	        	dataOS.writeBytes(CRLF);
+				        	        	dataOS.writeBytes(URLEncoder.encode(textview3.getText().toString(), "utf-8")+CRLF);
+				        	        	
+				        	        	dataOS.writeBytes(HYPHENS+BOUNDARY+CRLF);		// 寫--==================================
+				        	        	dataOS.writeBytes("Content-Disposition:from-data; name=\"gps\""+CRLF);
+				        	        	dataOS.writeBytes(CRLF);
+				        	        	dataOS.writeBytes(URLEncoder.encode(lalo, "utf-8")+CRLF);
+				        	        	Log.e("GPSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS", lalo);
+				        	        	dataOS.writeBytes(CRLF);
+				        	        	
+				        	        	dataOS.writeBytes(HYPHENS+BOUNDARY+CRLF);		// 寫--==================================
+				        	            String strContentDisposition = "Content-Disposition: form-data; name=\"file\"; filename=\"temp.jpeg\"";
+				        	            String strContentType = "Content-Type: image/jpeg";
+				        	            
+				        	        	dataOS.writeBytes(strContentDisposition+CRLF);	// 寫(Disposition)
+				        	        	dataOS.writeBytes(strContentType+CRLF);			// 寫(Content Type)
+				        	        	dataOS.writeBytes(CRLF);	
+				        	        	
+				        	        	int iBytesAvailable = fileInputStream.available();
+				        	        	byte[] byteData = new byte[iBytesAvailable];
+				        	            int iBytesRead = fileInputStream.read(byteData, 0, iBytesAvailable);
+				        	            
+				        	            /////寫照片//
+				        	        	while (iBytesRead > 0) {
+				        	        		dataOS.write(byteData, 0, iBytesAvailable);	// 開始寫內容
+				        	        		iBytesAvailable = fileInputStream.available();
+				        	        		iBytesRead = fileInputStream.read(byteData, 0, iBytesAvailable);
+				        	        	}
+				        	        	//////寫照片//
+				        	        	
+				        	        	dataOS.writeBytes(CRLF+HYPHENS+BOUNDARY+HYPHENS+CRLF);	// (結束)寫--==================================--		
+				        	        	fileInputStream.close();
+				        	            URLConn.connect();  
+				        	          
+				        	       
+				        	            dataOS.flush();
+				        	            dataOS.close(); // flush and close
+				        	            
+				        	            java.io.BufferedReader rd = new java.io.BufferedReader( new java.io.InputStreamReader(URLConn.getInputStream())); //開INPUT串流
+				        	            
+				        	            /*收PHP ECHO的字串*/
+				        	            String line; 
+				        	            Log.e("%%%%%%%%%%%%%%%%%", path);
+				        	            while ((line = rd.readLine()) != null) { 
+				        	             Log.e("##################",line);
+				        	            
+				        	            } 	            
+				        	            /**********************/
+				        	            rd.close(); 
 
-	        	            URLConn.disconnect();
-	        				} catch (MalformedURLException e) {
-	        					// TODO Auto-generated catch block
-	        					e.printStackTrace();
-	        				} catch (IOException e) {
-	        					// TODO Auto-generated catch block
-	        					e.printStackTrace();
-	        				} 
-	        				} catch (FileNotFoundException e1) {
-	        					// TODO Auto-generated catch block
-	        					e1.printStackTrace();
-	        				}
+				        	            URLConn.disconnect();
+				        				} catch (MalformedURLException e) {
+				        					// TODO Auto-generated catch block
+				        					e.printStackTrace();
+				        				} catch (IOException e) {
+				        					// TODO Auto-generated catch block
+				        					e.printStackTrace();
+				        				} 
+				        				} catch (FileNotFoundException e1) {
+				        					// TODO Auto-generated catch block
+				        					e1.printStackTrace();
+				        				}
+				                    }
+				                    catch(Exception e){
+				                        e.printStackTrace();
+				                    }
+				                    finally{
+				                        dialog.dismiss();
+				                    }
+				                } 
+				           }).start();
 	                	}else{
-	                		
+	                		AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);	//main是class name
+	    					builder.setTitle("溫馨小提醒：");
+	    					builder.setMessage("標註*為必填欄位");
+	    					builder.show();
 	                	}
 					}
 	        		
@@ -339,17 +374,22 @@ public class MainActivity extends Activity  implements OnClickListener {
 	                 Toast.makeText(MainActivity.this, text, duration).show();    
 	        }
 	        public void onClick(View v) {  	        	
-				int id = v.getId();  
-		    	switch(id){  
-		    		case R.id.ButtonShot:  
-		    				cameraMethod();  
-		    				break;  
-		    				/*
-		    		case R.id.ButtonVideo:  
-		    				videoMethod();  
-		    				break;
-		    				*/  
-		    	}  
+				boolean state=false;
+				state=isOnline();
+				if(state==true){
+					int id = v.getId();  
+			    	switch(id){  
+			    		case R.id.ButtonShot:  
+			    				cameraMethod();  
+			    				break;
+			    	}
+				}else{
+					AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);	//main是class name
+					builder.setTitle("溫馨小提醒：");
+					builder.setMessage("請開啟網路服務");
+					builder.show();
+				}
+	        	  
 	       }    
-	           
+	         
 	}  

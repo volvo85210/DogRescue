@@ -39,15 +39,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:enabled="false"
-        android:text="姓名："
+        android:text="*姓名：（必填）"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <AutoCompleteTextView
         android:id="@+id/autoCompleteTextView1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:textColor="#FF0000"
+        android:ems="15"
+        android:textColor="#000000"
         android:text="" />
 
     <TextView
@@ -55,15 +55,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:enabled="false"
-        android:text="電話："
+        android:text="*電話：（必填）"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <AutoCompleteTextView
         android:id="@+id/autoCompleteTextView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:textColor="#FF0000"
+        android:ems="15"
+        android:textColor="#000000"
         android:text="" />
 
     <TextView
@@ -71,15 +71,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:enabled="false"
-        android:text="地址："
+        android:text="*地址：（必填）"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <AutoCompleteTextView
         android:id="@+id/autoCompleteTextView3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:textColor="#FF0000"
+        android:ems="30"
+        android:textColor="#000000"
         android:text="" >
 
         <requestFocus />
@@ -92,11 +92,24 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
       android:background="#FFFFFF">
+<LinearLayout
+      android:orientation="vertical"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent">
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:enabled="false"
+        android:text="接下來的動作將要開啟您的手機GPS定位功能，讓協會取得位置，若是同意，請拍下急需救援的動物。"
+        android:textSize="30sp"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
       <Button
           android:id="@+id/ButtonShot"
           android:layout_width="fill_parent"
           android:layout_height="wrap_content"
           android:text="拍照"/>
+</LinearLayout>
 </RelativeLayout>
 
 <RelativeLayout
